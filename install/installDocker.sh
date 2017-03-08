@@ -44,4 +44,6 @@ sudo docker run hello-world
 # Check Docker version.
 docker --version
 
-sleep 2
+printf "\e[32m"
+printf "[OK]\n\n"
+printf "\e[39m"

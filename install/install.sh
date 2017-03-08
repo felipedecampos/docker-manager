@@ -1,5 +1,7 @@
 #!/bin/sh
 
+clear
+
 declare installdir=`dirname $0`
 declare rootdir="$(dirname "$installdir")"
 
@@ -7,16 +9,12 @@ printf "\n[ Processo de instalação iniciado ] \n\n"
 sleep 1
 
 printf "> Instalando docker.. \n"
-bash $installdir/installDocker.sh
-printf "\e[32m"
-printf "[OK]\n\n"
-printf "\e[39m"
+#bash $installdir/installDocker.sh
 
-printf "> Criando subnet onde o docker será acessado..\n"
+printf "> Criando network onde o docker será acessado..\n"
 bash $installdir/makeSubnetDocker.sh
-printf "\e[32m"
-printf "[OK]\n\n"
-printf "\e[39m"
+
+exit
 
 printf "> Construindo imagens dos containers.. \n"
 bash $installdir/buildImagesDocker.sh
