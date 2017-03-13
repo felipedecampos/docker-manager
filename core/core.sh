@@ -180,15 +180,23 @@ initEnvironments()
 
 	        if [ "$i" = "${inputEnvironment}" ] || [ "${initAll}" = "1" ]; then
 
-	           if [[ ! -z $(sudo docker ps -a -f name=${availableEnvironments[$i]} --quiet) ]]; then 
-        	       environmentRemoved=$(sudo docker rm -f $( sudo docker ps -a -f name=${availableEnvironments[$i]} --quiet ))
-    		   fi
+		    environment=$(sudo docker ps -a -f name=${availableEnvironments[$i]} --quiet)
 
-		   printf "\n Iniciando ambiente: ${availableEnvironments[$i]}.."
+		    printf "\n Iniciando ambiente: ${availableEnvironments[$i]}.."
 
-                   gnome-terminal -e "sh $rootdir/environments/${availableEnvironments[$i]}.sh" --geometry=1x1+3000+0 --hide-menubar
+	            if [[ ! -z $environment ]]; then 
+        	        
+			printf "\n > Starting, please wait.."
+			environmentStarted=$(sudo docker exec $(sudo docker start ${environment}) /etc/init.d/apache2 start 2> /dev/null)
 
-		   environmentNumberNotFound="0"
+		    else
+			
+			printf "\n > Runing, please wait.."
+	                gnome-terminal -e "sh $rootdir/environments/${availableEnvironments[$i]}.sh" --geometry=1x1+3000+0 --hide-menubar
+
+    		    fi
+
+		    environmentNumberNotFound="0"
 
 	        fi
 
