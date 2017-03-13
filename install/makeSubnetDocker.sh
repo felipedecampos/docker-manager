@@ -3,13 +3,14 @@
 declare installdir=`dirname $0`
 declare rootdir="$(dirname "$installdir")"
 
-newNetwork="docker-manager-network"
+# Load config
+source $rootdir/env.sh
 
-if [[ ! -z $(sudo docker network ls --filter name=${newNetwork} --quiet) ]]; then 
+if [[ ! -z $(sudo docker network ls --filter name=${network} --quiet) ]]; then 
 
     printf "Já existe uma network criada para o docker\n"
 
-    printf "Nome da network criada: ${newNetwork}\n"
+    printf "Nome da network criada: ${network}\n"
 
     printf "\e[33m"
     printf "[OK]\n\n"
@@ -54,13 +55,13 @@ exampleIp="${baseIp}.1.0.0/16"
 
 printf "Exemplo de faixa de IP: ${exampleIp}\n\n"
 
-read -p "Por favor digite a faixa de IP que irá disponibilizar para a nova network [${newNetwork}]: " faixaips
+read -p "Por favor digite a faixa de IP que irá disponibilizar para a nova network [${network}]: " faixaips
 
-sudo docker network create --subnet=${faixaips} ${newNetwork}
+sudo docker network create --subnet=${faixaips} ${network}
 
-if [[ -z $(sudo docker network ls --filter name=${newNetwork} --quiet) ]]; then 
+if [[ -z $(sudo docker network ls --filter name=${network} --quiet) ]]; then 
 
-    printf "Não foi possível criar a network: ${newNetwork}\n"
+    printf "Não foi possível criar a network: ${network}\n"
 
     printf "\e[31m"
     printf "[NOK]\n\n"
@@ -69,7 +70,7 @@ if [[ -z $(sudo docker network ls --filter name=${newNetwork} --quiet) ]]; then
     exit
 fi
 
-printf "Network para o docker criada com sucesso: ${newNetwork}\n"
+printf "Network para o docker criada com sucesso: ${network}\n"
 
 printf "\e[32m"
 printf "[OK]\n\n"
