@@ -11,6 +11,5 @@ declare -g network="docker-manager-network"
 
 # Shurtcut Manager Docker
 declare -g shortcutKeyboard="F12"
-declare -g shortcutName="manager-docker"
+declare -g shortcutName="docker-manager"
 declare -g shortcutCommand="sh ${rootdir}/init.sh"
-
