@@ -10,13 +10,12 @@ main()
 showHeader()
 {
     header="\0
-	# \n
-	# Inicializador de ambientes Docker \n
-	# \n
-	# Para sair digite: quit ou Ctrl+C \n
-	# \n
-	\n
-	Serviços: \n
+        # \n
+        # Inicializador de ambientes Docker \n
+        # \n
+        # Para sair digite: quit ou Ctrl+C \n
+        # \n\n
+        Serviços: \n
     "
 
     echo -e ${header}
@@ -27,10 +26,10 @@ showInstructions()
     showHeader
 
     declare -ga services=(
-	[1]="Exibir Imagens criadas"
-	[2]="Exibir ambientes rodando"
-	[3]="Iniciar ambientes" 
-	[4]="Parar ambientes rodando" 
+        [1]="Exibir Imagens criadas"
+        [2]="Exibir ambientes rodando"
+        [3]="Iniciar ambientes"
+        [4]="Parar ambientes rodando"
     )
 
     instructions="\0
@@ -60,26 +59,26 @@ setUpEnvironments()
 
     for environment in `ls $rootdir/environments/`;
     do
-	cod=${cod}+1
+	    cod=${cod}+1
 
         for i in "${!listRunningEnvironments[@]}"; do
 
-	    if [[ "${listRunningEnvironments[$i]}" = "${environment%.*}" ]]; then
+	        if [[ "${listRunningEnvironments[$i]}" = "${environment%.*}" ]]; then
 		
-		runningEnvironments[${cod}]=${listRunningEnvironments[$i]}
+		        runningEnvironments[${cod}]=${listRunningEnvironments[$i]}
 
-	        continue 2;
+	            continue 2;
 
-	    fi
+	        fi
 
-	done
+	    done
 
         availableEnvironments[${cod}]=`basename "${environment%.*}"`
 
     done
 
     if [ ! ${#availableEnvironments[@]} = 0 ]; then
-	availableEnvironments[0]="Todos"
+	    availableEnvironments[0]="Todos"
     fi
 
     printf "\n"
@@ -105,8 +104,8 @@ showRunningContainers()
 
     environmentsRunning="\0
         # \n
-	# Ambientes rodando: \n
-	# \n
+        # Ambientes rodando: \n
+        # \n
     "    
 
     echo -e ${environmentsRunning}
@@ -128,8 +127,8 @@ initEnvironments()
 
     if [[ ${#availableEnvironments[@]} == 0 ]]; then
         noAvailableEnvironments=" \n
-	    Não existem ambientes disponíveis \n
-	"
+            Não existem ambientes disponíveis \n
+        "
 
         echo -e ${noAvailableEnvironments}
 
@@ -138,10 +137,10 @@ initEnvironments()
 
     headerAvailableEnvironments="\0
         # \n
-	# Ambientes disponíveis: \n
-	# \n
-	# Para sair digite: quit ou Ctrl+C \n
-	# \n
+        # Ambientes disponíveis: \n
+        # \n
+        # Para sair digite: quit ou Ctrl+C \n
+        # \n
     "
 
     echo -e ${headerAvailableEnvironments}
@@ -180,23 +179,31 @@ initEnvironments()
 
 	        if [ "$i" = "${inputEnvironment}" ] || [ "${initAll}" = "1" ]; then
 
-		    environment=$(sudo docker ps -a -f name=${availableEnvironments[$i]} --quiet)
+                environment=$(sudo docker ps -a -f name=${availableEnvironments[$i]} --quiet)
 
-		    printf "\n Iniciando ambiente: ${availableEnvironments[$i]}.."
+                printf "\n Iniciando ambiente: ${availableEnvironments[$i]}.."
+
+                declare coredir=`dirname $0`
+                declare rootdir="$(dirname "$coredir")"
+                source $rootdir/environments/${availableEnvironments[$i]}.sh
 
 	            if [[ ! -z $environment ]]; then 
         	        
-			printf "\n > Starting, please wait.."
-			environmentStarted=$(sudo docker exec $(sudo docker start ${environment}) /etc/init.d/apache2 start 2> /dev/null)
+                    printf "\n > Starting, please wait.."
+                    resultStartedEnvironment=$(sudo docker exec $(sudo docker start ${environment}) /etc/init.d/apache2 start 2> /dev/null)
 
-		    else
-			
-			printf "\n > Runing, please wait.."
-	                gnome-terminal -e "sh $rootdir/environments/${availableEnvironments[$i]}.sh" --geometry=1x1+3000+0 --hide-menubar
+                    #echo -e "\n\n${resultStartedEnvironment}\n\n"
+
+                else
+
+                    printf "\n > Runing, please wait.."
+                    resultRunContainer=$(sudo docker exec $(sudo docker run -ti --detach --network docker-manager-network --ip ${environmentIp} --name ${availableEnvironments[$i]} -v ${environmentVol}:${dockerVol} ${imageName}) /etc/init.d/apache2 start 2> /dev/null)
+
+                    #echo -e "\n\n${resultRunContainer}\n\n"
 
     		    fi
 
-		    environmentNumberNotFound="0"
+		        environmentNumberNotFound="0"
 
 	        fi
 
@@ -205,7 +212,7 @@ initEnvironments()
 	    printf "\n\n"
 	    
 	    if [[ "${environmentNumberNotFound}" = "0" ]]; then
-		sleep 5
+		    sleep 5
 
 	    	break
 	    fi
@@ -227,8 +234,8 @@ stopEnvironments()
 
     if [[ ${#runningEnvironments[@]} == 0 ]]; then
         noRunningEnvironments=" \n
-	    Não existem ambientes rodando \n
-	"
+            Não existem ambientes rodando \n
+        "
 
         echo -e ${noRunningEnvironments}
 
@@ -237,10 +244,10 @@ stopEnvironments()
 
     headerRunningEnvironments="\0
         # \n
-	# Ambientes rodando: \n
-	# \n
-	# Para sair digite: quit ou Ctrl+C \n
-	# \n
+        # Ambientes rodando: \n
+        # \n
+        # Para sair digite: quit ou Ctrl+C \n
+        # \n
     "
 
     echo -e ${headerRunningEnvironments}
@@ -343,8 +350,8 @@ showImages()
 
     headerImagesCreated="\0
         # \n
-	# Imagens criadas: \n
-	# \n
+        # Imagens criadas: \n
+        # \n
     "    
 
     echo -e ${headerImagesCreated}
