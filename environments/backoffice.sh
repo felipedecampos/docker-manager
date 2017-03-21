@@ -1,4 +1,4 @@
-echo "123456" | sudo -S ls
+echo "Udt&2812" | sudo -S ls
 
 echo # 
 echo # Initializing Backoffice Docker Container
@@ -8,4 +8,4 @@ currentFile=$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")
 
 environment=`basename "${currentFile%.*}"`
 
-container="$(sudo docker run -ti --detach --network felipe --ip 173.1.0.2 --name ${environment} -v /home/$USER/projects:/home/httpd/html ubuntu.php53)"; sudo docker exec ${container} /etc/init.d/apache2 start
+container="$(sudo docker run -ti --detach --network docker-manager-network --ip 173.1.0.2 --name ${environment} -v /home/$USER/projects:/home/httpd/html ubuntu.php53:1.0)"; sudo docker exec ${container} /etc/init.d/apache2 start
