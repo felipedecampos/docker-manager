@@ -59,6 +59,10 @@ setUpEnvironments()
 
     for environment in `ls $rootdir/environments/`;
     do
+        if [[ "${environment%.*}" = "sample" ]]; then
+            continue
+        fi
+
 	    cod=${cod}+1
 
         for i in "${!listRunningEnvironments[@]}"; do
