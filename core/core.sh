@@ -1,5 +1,11 @@
 #!/bin/sh
 
+declare coredir=`dirname $0`
+declare rootdir="$(dirname "$coredir")"
+
+# Load config
+source $rootdir/env.sh
+
 main()
 {
     showInstructions
@@ -187,9 +193,7 @@ initEnvironments()
 
                 printf "\n Iniciando ambiente: ${availableEnvironments[$i]}.."
 
-                declare coredir=`dirname $0`
-                declare rootdir="$(dirname "$coredir")"
-                source $rootdir/environments/${availableEnvironments[$i]}.sh
+                source $environmentsdir/${availableEnvironments[$i]}.sh
 
 	            if [[ ! -z $environment ]]; then 
         	        
@@ -338,8 +342,6 @@ showImages()
 {
     imagesCreated=$( sudo docker images --format "table {{.ID}}\t{{.Repository}}\t{{.Tag}}" ) #--filter=reference="*:latest"
 
-    clear
-
     if [ ${#imagesCreated[@]} == 0 ]; then
 
 	noImagesCreated="\n
@@ -369,6 +371,105 @@ showImages()
     printf "\n"
 }
 
+setUpUsedIps()
+{
+    declare -ga usedIps
+
+    cod=0
+
+    for environment in `ls $rootdir/environments/`;
+    do
+        if [[ "${environment%.*}" = "sample" ]]; then
+
+            continue
+        fi
+
+        source $environmentsdir/${environment}
+
+        if [[ -z ${environmentIp} ]]; then
+
+            continue
+        fi
+
+        usedIps[${cod}]=${environmentIp}
+
+        cod=${cod}+1
+    done
+}
+
+showUsedIps()
+{
+    foundNetworks=($(sudo docker network inspect --format="{{ range .Containers }}{{ .IPv4Address }} {{end}}" $(sudo docker network ls -q)))
+
+    setUpUsedIps
+
+    printf " Ips usados:\n"
+
+    for index in "${!usedIps[@]}"; do
+
+        printf " > ${usedIps[$index]}\n"
+    done
+
+    for i in "${!foundNetworks[@]}"; do
+
+        for index in "${!usedIps[@]}"; do
+
+            local currentIp=$(echo ${foundNetworks[$i]} | sed -e 's/\/.*//g')
+
+            if [[ "${usedIps[$index]}" = "${currentIp}" ]]; then
+
+                continue 2
+            fi
+        done
+
+        printf " > ${currentIp}\n"
+    done
+}
+
+showAvailablesIpsFromNetwork()
+{
+    if [[ -z $1 ]]; then
+
+        printf " Não foi passado a network para realizar a busca dos Ips\n"
+
+        exit
+    fi
+
+    foundNetwork=($(sudo docker network inspect --format="{{ range .IPAM.Config }}{{ .Subnet }}{{end}}" $(sudo docker network ls --filter name="$1" -q) 2> /dev/null))
+
+    if [[ "${#foundNetwork[@]}" = "0" ]]; then
+
+        printf " Não foi possível localizar a(s) network(s) solicitada(s): $1\n"
+
+        exit
+    fi
+
+    setUpUsedIps
+
+    printf " Ips disponíveis para uso na network: $1\n"
+
+    for i in ${!foundNetwork[@]}; do
+
+        declare -i startIp=2
+        declare -i endIp=$(echo ${foundNetwork[$i]} | sed -e 's/.*\///g')
+        declare baseIp=$(echo ${foundNetwork[$i]} | sed -e 's/\.[0-9]\{1,3\}\/[0-9]\{1,2\}/./g')
+
+        for seq in `seq ${startIp} ${endIp}`;
+        do
+
+            for index in "${!usedIps[@]}"; do
+
+                if [[ "${usedIps[$index]}" = "${baseIp}$seq" ]]; then
+
+                    continue 2;
+                fi
+            done
+
+            printf " > ${baseIp}$seq\n"
+        done
+    done
+}
+
 handleExitProgram()
 {
     if [[ -z $1 ]]; then
@@ -394,6 +495,8 @@ handleService()
             continue
 
         elif [ ${inputService} == 1 ]; then
+            clear
+
             showImages
 
             break
