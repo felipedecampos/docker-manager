@@ -1,6 +1,6 @@
 #!/bin/sh
 
-declare installdir=`dirname $0`
+declare installdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 declare rootdir="$(dirname "$installdir")"
 
 # Load config

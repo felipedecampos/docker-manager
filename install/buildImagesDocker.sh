@@ -1,8 +1,25 @@
 #!/bin/sh
 
-exit
-
-declare installdir=`dirname $0`
+declare installdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 declare rootdir="$(dirname "$installdir")"
 
-sleep 2
+# Load config
+source $rootdir/env.sh
+
+read -p "Que imagem deseja pesquisar no Docker Hub: " search
+
+searched=($(sudo docker search --limit ${filterLimit} ${filterStars} ${filterOfficial} ${filterTrunc} \"${search}\" | awk '{if(NR>1) print}' | grep php))
+
+echo ${#searched[@]}
+
+for i in "${!searched[@]}"; do
+
+    echo ${searched[$i]}
+
+done
+
+printf "sudo docker search --limit ${filterLimit} ${filterStars} ${filterOfficial} ${filterTrunc} \"${search}\" | awk '{if(NR>1) print}' | grep php"
+
+#printf "\e[32m"
+#printf "[OK]\n\n"
+#printf "\e[39m"

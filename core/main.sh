@@ -1,6 +1,6 @@
 #!/bin/bash
 
-declare -g coredir=`dirname $0`
+declare -g coredir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 declare -g rootdir="$(dirname "$coredir")"
 
 # Load functions

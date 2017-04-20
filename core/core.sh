@@ -1,6 +1,6 @@
 #!/bin/sh
 
-declare coredir=`dirname $0`
+declare coredir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 declare rootdir="$(dirname "$coredir")"
 
 # Load config

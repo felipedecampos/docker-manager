@@ -2,7 +2,7 @@
 
 clear
 
-declare installdir=`dirname $0`
+declare installdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 declare rootdir="$(dirname "$installdir")"
 
 sudo ls 1> /dev/null
@@ -19,9 +19,12 @@ printf "> Criando network onde o docker será acessado..\n"
 printf "> Criando atalho do gerenciador do docker.. \n"
 #bash $installdir/makeShortcutKeyboard.sh
 
+printf "> Construindo imagens do docker.. \n"
+bash $installdir/buildImagesDocker.sh
+
 exit
 
-printf "> Construindo imagens dos containers.. \n"
+printf "> Criando container baseado nas imagens.. \n"
 bash $installdir/buildImagesDocker.sh
 printf "\e[32m"
 printf "[OK]\n\n"
