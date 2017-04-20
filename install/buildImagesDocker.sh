@@ -8,17 +8,13 @@ source $rootdir/env.sh
 
 read -p "Que imagem deseja pesquisar no Docker Hub: " search
 
-searched=($(sudo docker search --limit ${filterLimit} ${filterStars} ${filterOfficial} ${filterTrunc} \"${search}\" | awk '{if(NR>1) print}' | grep php))
-
-echo ${#searched[@]}
+searched=( $(sudo docker search --limit ${filterLimit} ${filterStars} ${filterOfficial} ${filterTrunc} "${search}" | awk '{if(NR>1) print $1}') )
 
 for i in "${!searched[@]}"; do
 
     echo ${searched[$i]}
 
 done
-
-printf "sudo docker search --limit ${filterLimit} ${filterStars} ${filterOfficial} ${filterTrunc} \"${search}\" | awk '{if(NR>1) print}' | grep php"
 
 #printf "\e[32m"
 #printf "[OK]\n\n"

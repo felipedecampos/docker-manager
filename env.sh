@@ -17,5 +17,5 @@ declare -g shortcutCommand="sh ${rootdir}/init.sh"
 # buildImages filters
 declare -g filterLimit=30
 declare -g filterStars="--filter STARS=1"
-declare -g filterOfficial="--filter "is-official=true""
+declare -g filterOfficial="" #"--filter "is-official=true""
 declare -g filterTrunc="--no-trunc"
