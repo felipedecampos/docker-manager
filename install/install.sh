@@ -20,15 +20,12 @@ printf "> Criando atalho do gerenciador do docker.. \n"
 #bash $installdir/makeShortcutKeyboard.sh
 
 printf "> Construindo imagens do docker.. \n"
-bash $installdir/buildImagesDocker.sh
-
-exit
+#bash $installdir/buildImagesDocker.sh
 
 printf "> Criando container baseado nas imagens.. \n"
-bash $installdir/buildImagesDocker.sh
-printf "\e[32m"
-printf "[OK]\n\n"
-printf "\e[39m"
+bash $installdir/runContainerDocker.sh
+
+exit
 
 printf "> Configurando os IPs dos containers em hosts.. \n"
 bash $installdir/configHosts.sh
