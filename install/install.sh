@@ -22,22 +22,15 @@ printf "> Criando atalho do gerenciador do docker.. \n"
 printf "> Construindo imagens do docker.. \n"
 #bash $installdir/buildImagesDocker.sh
 
-printf "> Criando container baseado nas imagens.. \n"
-bash $installdir/runContainerDocker.sh
+printf "> Criando arquivos de ambientes.. \n"
+#bash $installdir/makeEnvironmentDocker.sh
 
-exit
+printf "> Criando container baseado nas imagens e arquivos de ambientes.. \n"
+#bash $installdir/runContainerDocker.sh
 
 printf "> Configurando os IPs dos containers em hosts.. \n"
 bash $installdir/configHosts.sh
-printf "\e[32m"
-printf "[OK]\n\n"
-printf "\e[39m"
+
+exit
 
 printf "[ Processo de instalação finalizado ]\n\n"
-
-#verde
-#printf "\e[32m"
-#amarelo
-#printf "\e[33m"
-# vermelho
-#printf "\e[31m"
